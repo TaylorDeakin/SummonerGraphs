@@ -19,7 +19,6 @@ router.get('/', function (req, res, next) {
         latestRegion: latestRegion
     });
 });
-
 router.get('/submit', function (req, res, next) {
     var validator = require('validator');
     var request = require('request');
@@ -27,15 +26,16 @@ router.get('/submit', function (req, res, next) {
     var rp = require('request-promise');
     var Player = require('../scripts/player.js');
     var apiKey = require('../private').apiKey;
-    var name, nameLower, region, season, data;
+    var name, nameLower, region, season, retryAfter;
+
 
     name = req.query.summoner;
     region = req.query.region;
     season = req.query.season;
-    if(!req.session.latestRegion != region){
+
+    if (!req.session.latestRegion != region) {
         req.session.latestReigon = region;
     }
-
 
     nameLower = funcs.FormatName(name);
     // Player Object helps keep me sane, although there's probably a better way to do it
@@ -86,26 +86,50 @@ router.get('/submit', function (req, res, next) {
                     rp(masteryQuery)
                         .then(function (jsonString) {
                             player.setMasteryData(jsonString);
-                            var rankedMasteryList = player.calc();
                             req.session.player = player;
                             res.redirect(region + '/summoner/' + name + '/' + season);
 
 
                         })
                         .catch(function (err) {
-                            req.flash('error', 'Summoner "' + name + '" has no mastery scores');
-                            res.redirect('/');
+                            if (err.statusCode == 429) {
+                                console.log(err.response.headers);
+                                console.log("Mastery Score Query");
+                                retryAfter = err.response.headers.retry - after;
+                                var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
+                                res.redirect(errorString);
+                            } else {
+                                req.flash('error', 'Summoner "' + name + '" has no mastery scores');
+                                res.redirect('/');
+                            }
+
                         });
                 })
                 .catch(function (err) {
-                    req.flash('error', 'Summoner "' + name + '" is not ranked');
-                    res.redirect('/');
+                    if (err.statusCode == 429) {
+                        console.log(err.response.headers);
+                        retryAfter = err.response.headers.retry - after;
+                        var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
+                        res.redirect(errorString);
+                        console.log("Ranked Query ");
+                    } else {
+                        req.flash('error', 'Summoner "' + name + '" is not ranked');
+                        res.redirect('/');
+                    }
                 });
 
         })
         .catch(function (err) {
-            req.flash('error', 'Couldn\'t find the summoner "' + name + '" in ' + funcs.getRegionName(region));
-            res.redirect('/');
+            if (err.statusCode == 429) {
+                console.log(err.response.headers);
+                retryAfter = err.response.headers.retry - after;
+                var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
+                res.redirect(errorString);
+                console.log("Player Query");
+            } else {
+                req.flash('error', 'Couldn\'t find the summoner "' + name + '" in ' + funcs.getRegionName(region));
+                res.redirect('/');
+            }
         });
 
 
@@ -138,8 +162,25 @@ router.get('/:region/summoner/:name/:season', function (req, res, next) {
     }
 
 
+});
+router.get('/limit', function (req, res, next) {
+    var wait = req.query.wait;
+    var name = req.query.summoner;
+    var region = req.query.region;
+    var season = req.query.season;
+    if (wait > 3) {
+        req.flash('error', "We're currently experiencing heavy traffic. Please try again in a few minutes");
+        res.redirect('/');
+    } else {
+        setTimeout(function () {
+            console.log("time's up");
+            res.redirect('/submit?summoner=' + name + "&region=" + region + "&season=" + season);
+        }, wait * 1000);
+    }
+
 
 });
+
 router.get('/:name', function (req, res, next) {
     var name = req.params.name;
     // setup to allow more pages in the future
