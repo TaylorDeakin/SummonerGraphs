@@ -1,0 +1,43 @@
+#include "rex.h"
+
+
+
+/**
+ * Main.
+ **/
+void main() {
+
+  int switches = 0;
+  int lssd = 0;
+  int rssd = 0;
+
+  int displayMode = 1;
+  int newDisplayMode = 0;
+
+  //infinite loop
+  while(1){
+    //read the value of the switches
+    switches = RexParallel->Switches;
+    //update the display mode
+    newDisplayMode = RexParallel->Buttons;
+    if (newDisplayMode > 0){
+      displayMode = newDisplayMode;
+    }
+
+    //format the display in hex
+    if(displayMode == 1){
+      lssd = switches & 0xf0;
+      lssd = lssd>>4;
+      rssd = switches & 0x0f;
+    }
+    //format the display in dec
+    else if(displayMode == 2){
+      lssd = switches / 10;
+      rssd = switches % 10;
+    }
+
+    //Write the current values to the ssds
+    RexParallel->LeftSSD = lssd;
+    RexParallel->RightSSD = rssd;
+  }
+}

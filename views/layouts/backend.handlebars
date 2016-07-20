@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <?php include_once('inc/favicons.html');?>
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <script src="/js/jquery.js"></script>
+    <link href="/stylesheets/summernote.css" rel="stylesheet" type="text/css">
+    <link href="/stylesheets/admin.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>{{title}}</title>
+<body class="backend">
+<div class="overlay">
+    <div class="wrap">
+        <div class="container">
+            {{>dashboard_navbar}}
+            {{{body}}}
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

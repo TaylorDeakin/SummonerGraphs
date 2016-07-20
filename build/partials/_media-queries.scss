@@ -1,0 +1,118 @@
+
+@media (max-width: 768px) {
+  #mastery-winrate {
+    height: 480px;
+  }
+  .champ img {
+    float: none;
+  }
+  .jqplot-bubble-label {
+    height: 55px;
+    width: 55px;
+    border-radius: 100px;
+    border: 3px solid #eee;
+    color: transparent !important;
+    text-shadow: none;
+    background-size: 45px 45px !important;
+    padding: 0;
+    margin-top: -5px;
+  }
+  .sprite{
+    display: none;
+  }
+  .mastery-lvl {
+    width: 40px;
+    margin-top: 15px;
+  }
+  .form-control {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .error {
+    padding-top: 35%;
+  }
+  .error h1 {
+    font-size: 100px;
+  }
+}
+
+/* * Cover */
+.cover {
+  padding: 0 20px;
+}
+
+.cover .btn-lg {
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+/* * Footer */
+footer {
+  display: block;
+  margin-top: 40px;
+  padding: 20px;
+}
+
+.img-responsive {
+  margin: 0 auto;
+}
+
+/* * Affix and center */
+@media (min-width: 768px) {
+  .masthead-brand {
+    float: left;
+  }
+  .masthead-nav {
+    float: right;
+  }
+  .masthead-left {
+    float: left !important;
+  }
+  /* Pull out the header and footer */
+  .masthead {
+    position: fixed;
+    top: 0;
+  }
+  .mastfoot {
+    position: fixed;
+    bottom: 0;
+  }
+  /* Start the vertical centering */
+  .site-wrapper-inner {
+    vertical-align: middle;
+  }
+  /* Handle the widths */
+  .masthead, .mastfoot, .cover-container {
+    width: 100%;
+    /* Must be percentage or pixels for horizontal alignment */
+  }
+
+}
+
+@media (max-width: 997px) {
+  .champ img {
+    float: none;
+  }
+  .wrap > .container {
+    padding: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .mastery-info {
+    padding: 0;
+  }
+  .masthead-brand {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 992px) {
+  .masthead, .mastfoot, .cover-container {
+    width: 700px;
+  }
+  .cover {
+    margin-top: -150px;
+  }
+
+}
+

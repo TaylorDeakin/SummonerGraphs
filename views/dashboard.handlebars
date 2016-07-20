@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-md-4">
+        <h1>League Mastery Dashboard</h1>
+        <form action="/"></form>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4"></div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Pages</h2>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>ID</th>
+                <th>Permalink</th>
+                <th>Last Modified</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each content}}
+                <tr>
+                    <td>{{@index}}</td>
+                    <td>{{name}}</td>
+                    <td>{{_id}}</td>
+                    <td><a href="/{{name}}">/{{name}}</a></td>
+                    <td>{{lastModified}}</td>
+                    <td><a href="/admin/edit/{{name}}">Edit</a></td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

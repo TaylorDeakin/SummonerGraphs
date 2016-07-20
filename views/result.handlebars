@@ -1,0 +1,157 @@
+<div class="wrap">
+    <div class="container">
+        {{>navbar}}
+        <div class="profile"
+             style="background: url('http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{highestMastery}}_0.jpg'); background-position: 50% 25%">
+            <img src="http://ddragon.leagueoflegends.com/cdn/{{version}}/img/profileicon/{{picon}}.png" alt=""
+                 class="profile-icon align-left">
+            <h2 class="player-title">{{pname}}</h2>
+        </div>
+        <div class="row">
+            <h2 class="section-title">Winrate vs Champion Mastery Points</h2>
+            <p></p>
+            <div id="mastery-winrate-tooltip"></div>
+            <div id="mastery-winrate" class="mastery-winrate-plot"></div>
+        </div>
+
+        <div class="ranking-list data-section">
+            <h2 class="section-title">Individual Champion Summary</h2>
+            <p>Compare each individual champion's winrate and mastery level</p>
+            {{#grouping pRankedMasteryList 3}}
+                <div class="row">
+                    {{#each this}}
+                        <div class="col-xs-12 col-sm-4 col-md-4 champ">
+                            <img src="http://ddragon.leagueoflegends.com/cdn/{{../../version}}/img/champion/{{key}}.png"/>
+                            <div class="mastery-info">
+                                <h3>{{name}}</h3>
+                                <p>L{{level}} | {{winrate}}%
+                                <br>{{wins}}W | {{losses}}L</p>
+                            </div>
+                        </div>
+
+                    {{/each}}
+                </div>
+            {{/grouping}}
+        </div>
+
+        {{>footer}}
+    </div>
+</div>
+
+<script src="/js/jqplot-combined.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //Get Data for chart
+        var arr = [{{{chartData}}}];
+
+        //create chart
+        plot1 = $.jqplot('mastery-winrate', [arr], {
+            seriesDefaults: {
+                renderer: $.jqplot.BubbleRenderer,
+                rendererOptions: {
+                    autoscalePointsFactor: -0.25,
+                    autoscaleMultiplier: 0.55,
+                    bubbleAlpha: 0.7,
+                    highlightAlpha: 1
+                },
+                shadow: true,
+                shadowAlpha: 0.05,
+
+            },
+            axes: {
+                xaxis: {
+                    pad: 0,
+                    tickOptions: {
+                        showGridline: true
+                    },
+                    showTicks: true,
+                    drawMinorTickMarks: false,
+                    label: 'Mastery Points',
+                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                    labelOptions: {
+                        fontFamily:  "'Muli', sans-serif",
+                        fontSize: '16pt',
+                        textColor: '#101010'
+                    },
+                },
+                yaxis: {
+                    showTicks: true,
+                    label: 'Winrate',
+                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                    labelOptions: {
+                        fontFamily: "'Muli', sans-serif",
+                        fontSize: '16pt',
+                        textColor: '#101010',
+
+                    },
+                }
+            },
+            highlighter: {
+                show: true,
+                tooltipAxes: 'yx',
+                yvalues: 1,
+                tooltipOffset: 20,
+                tooltipFadeSpeed: 'def',
+                tooltipLocation: 'n',
+                formatString: 'Winrate: %s%<br>Mastery Points: %s'
+            }
+
+        });
+
+        GraphImages();
+        FixAxes();
+    });
+
+    $(window).resize(function () {
+        plot1.replot({resetAxes: true});
+        GraphImages();
+        FixAxes();
+
+    });
+
+    var GraphImages = function () {
+        var count = $('.jqplot-bubble-label').length;
+
+        for (var i = 0; i < count; i++) {
+            var data = $('.jqplot-bubble-label')[i].innerHTML;
+            result = data.split(',');
+            var champName = result[0];
+            var lvl = result[1];
+            champName = champName.replace(/ |'/g, '');
+            var current = $('.jqplot-bubble-label')[i];
+            var bgImg = "http://ddragon.leagueoflegends.com/cdn/{{version}}/img/champion/" + champName;
+            $(current).css("background", "url(" + bgImg + ")");
+            $(current).append("<span class='sprite sprite-champ-mastery-" + lvl +  "'></span>");
+        }
+    };
+
+    var FixAxes = function () {
+        var count = $('.jqplot-yaxis-tick').length;
+
+        for (var i = 0; i < count; i++) {
+            var current = $('.jqplot-yaxis-tick')[i];
+            var value = current.innerHTML;
+
+            if (value > 100 || value < 0) {
+                $(current).hide();
+            }
+
+
+        }
+        var count = $('.jqplot-xaxis-tick').length;
+
+        for (var i = 0; i < count; i++) {
+            var current = $('.jqplot-xaxis-tick')[i];
+            var value = current.innerHTML;
+
+            if (value < 0) {
+                $(current).hide();
+            } else if (i % 2 == 0) {
+                $(current).hide();
+            }
+
+
+        }
+
+    }
+</script>

@@ -1,0 +1,18 @@
+<div class="form-group">
+    <select name="region" class="form-control">
+        {{#if latestRegion}}
+            {{{matchedSelect 'Brazil,Europe Nordic &amp; East,Europe West,Latin America North,Latin America South,North America,Oceania,Russia,Turkey' 'br,eune,euw,lan,las,na,oce,ru,tr' latestRegion}}}
+        {{else}}
+            <option value="br">Brazil</option>
+            <option value="eune">Europe Nordic &amp; East</option>
+            <option value="euw">Europe West</option>
+            <option value="lan">Latin America North</option>
+            <option value="las">Latin America South</option>
+            <option value="na" selected="">North America</option>
+            <option value="oce">Oceania</option>
+            <option value="ru">Russia</option>
+            <option value="tr">Turkey</option>
+        {{/if}}
+
+    </select>
+</div>

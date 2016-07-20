@@ -1,0 +1,99 @@
+.jqplot-highlighter-tooltip {
+  padding: 10px;
+  background: #333;
+  color: white;
+  margin: 25px;
+  font-size: 16px;
+}
+
+.jqplot-bubble-label {
+  height: 90px;
+  width: 90px;
+  border-radius: 100px;
+  border: 3px solid #000;
+  color: transparent !important;
+  text-shadow: none;
+  background-size: 90px 90px !important;
+  padding: 0;
+  margin-top: -5px;
+  background-position: center !important;
+}
+
+#mastery-winrate {
+  height: 705px;
+  margin-bottom: 15px;
+}
+
+.jqplot-yaxis-tick {
+  color: #101010;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.jqplot-yaxis-tick::after {
+  content: "%";
+}
+
+.profile-icon {
+  display: inline;
+  float: left;
+  width: 80px;
+  height: inherit;
+  margin: 0 15px;
+  border: 3px solid #eee;
+}
+
+.mastery-winrate-plot {
+  height: 400px;
+  display: block;
+}
+
+.sprite {
+  background-image: url(../img/spritesheet.png);
+  background-repeat: no-repeat;
+  display: block;
+  margin-top: 25px;
+  margin-left: -4.5px;
+}
+
+.sprite-champ-mastery-1 {
+  width: 90px;
+  height: 88px;
+  background-position: -5px -5px;
+}
+
+.sprite-champ-mastery-2 {
+  width: 90px;
+  height: 88px;
+  background-position: -105px -5px;
+}
+
+.sprite-champ-mastery-3 {
+  width: 90px;
+  height: 88px;
+  background-position: -5px -103px;
+}
+
+.sprite-champ-mastery-4 {
+  width: 90px;
+  height: 88px;
+  background-position: -105px -103px;
+}
+
+.sprite-champ-mastery-5 {
+  width: 90px;
+  height: 88px;
+  background-position: -205px -5px;
+}
+
+.sprite-champ-mastery-6 {
+  width: 90px;
+  height: 88px;
+  background-position: -205px -103px;
+}
+
+.sprite-champ-mastery-7 {
+  width: 90px;
+  height: 88px;
+  background-position: -5px -201px;
+}

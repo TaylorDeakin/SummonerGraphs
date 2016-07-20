@@ -1,0 +1,29 @@
+.error-404 {
+  background: url('../img/404.jpg');
+  background-size: cover;
+  background-position: 80% 20%;
+  color: #eee;
+}
+
+.error, .tooltip {
+
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+
+  text-align: left;
+}
+
+.error h1 {
+  font-size: 150px;
+  text-align: left;
+}
+
+.error h2 {
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.error p {
+  font-size: 20px;
+}

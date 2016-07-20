@@ -1,0 +1,25 @@
+
+.navbar-inverse {
+  background: $themeColour;
+  border: none;
+  color: #eee;
+  border-radius: 0;
+}
+
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav > li > a {
+  color: #101010;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+  background: darken($themeColour, 2.5%);
+}
+.navbar-inverse .navbar-nav>li>a:focus, .navbar-inverse .navbar-nav>li>a:hover{
+  font-weight: 600;
+}
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
+  border: none;
+}
+
+.navbar-collapse.in {
+  overflow: hidden;
+}

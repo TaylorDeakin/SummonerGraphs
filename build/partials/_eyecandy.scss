@@ -1,0 +1,44 @@
+.home {
+  color: #eee;
+}
+.btn-primary {
+  background-color: #00BCD4;
+  border-color: #0097A7;
+}
+/* Custom default button */
+.btn-default, .btn-default:hover, .btn-default:focus {
+  color: #333;
+  text-shadow: none;
+  /* Prevent inheritence from `body` */
+  background-color: #fff;
+  border: 1px solid #fff;
+}
+.outer-shape {
+  fill: #eee;
+  animation-name: icon-hover;
+  animation-duration: 0.5s;
+  animation-direction: reverse;
+}
+.outer-shape:hover{
+  fill: $themeColour;
+  animation-name: icon-hover;
+  animation-duration: 0.5s;
+}
+.alert {
+  text-align: left;
+  text-shadow: none;
+}
+
+@keyframes icon-hover {
+  from {
+    fill: #101010;
+  }
+  to {
+    fill: $themeColour;
+  }
+}
+
+.img-crest{
+  width: 90px;
+  margin-top: 20px;
+}

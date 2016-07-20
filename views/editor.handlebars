@@ -1,0 +1,44 @@
+<div class="col-md-12">
+
+    <h1>Editing page: {{pageTitle}}</h1>
+    <p><a href="/admin/delete/{{pageName}}">Delete</a></p>
+    {{#if message}}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>{{message}}</div>
+    {{/if}}
+    <form id="content-edit" action="/admin/submit/{{pageName}}" method="post">
+        <div class="form-group">
+            <label for="pageTitle">Page Title</label>
+            <input type="text" name="pageTitle" id="pageTitle" class="form-control" placeholder="{{pageTitle}}"
+                   value="{{pageTitle}}">
+        </div>
+        <label for="summernote">Content:</label>
+        <div id="summernote">{{{content}}}</div>
+
+                    <textarea id="content" title="content" name="content" style="display: none">
+
+                    </textarea>
+        <button>Save Changes</button>
+    </form>
+</div>
+
+
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/summernote.min.js"></script>
+<script type="text/javascript">
+    $("#content-edit").submit(function (event) {
+        var markupStr = $('#summernote').summernote('code');
+        $("textarea#content").html(markupStr);
+        $("content-edit").submit();
+    });
+
+    $(document).ready(function () {
+        $('#summernote').summernote({
+            minHeight: null,
+            maxHeight: null,
+            focus: true
+        });
+    });
+</script>

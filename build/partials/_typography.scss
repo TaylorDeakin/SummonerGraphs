@@ -1,0 +1,35 @@
+body {
+  text-align: center;
+  font-family: 'Muli', serif;
+  font-size: 16px;
+}
+
+h1, h2, h3 {
+  font-family: 'Montserrat', serif;
+  text-align: center;
+}
+
+.page-content h1, .page-content h2, .page-content h3 {
+  text-align: left;
+}
+
+.section-title {
+  color: #101010;
+  font-size: 34px;
+}
+
+.player-title {
+  text-align: left;
+  color: #fff;
+  text-shadow: 2px 2px #000000;
+}
+
+.small-header {
+  font-size: 18px;
+  padding-bottom: 10px;
+}
+
+.inline-header {
+  display: inline;
+  padding: 10px;
+}

@@ -1,0 +1,180 @@
+var express = require('express');
+var router = express.Router();
+var funcs = require('../scripts/functions.js');
+var date = new Date();
+var year = date.getFullYear();
+var marked = require('marked');
+var fs = require('fs');
+
+var siteTitle = "Summoner Graphs";
+
+/* GET home page. */
+router.get('/', function (req, res, next) {
+    var latestRegion = req.session.latestRegion;
+
+    res.render('index', {
+        title: siteTitle,
+        splash: funcs.getSplash(),
+        error: req.flash('error'),
+        latestRegion: latestRegion
+    });
+});
+
+router.get('/submit', function (req, res, next) {
+    var validator = require('validator');
+    var request = require('request');
+    var fs = require('fs');
+    var rp = require('request-promise');
+    var Player = require('../scripts/player.js');
+    var apiKey = require('../private').apiKey;
+    var name, nameLower, region, season, data;
+
+    name = req.query.summoner;
+    region = req.query.region;
+    season = req.query.season;
+    if(!req.session.latestRegion != region){
+        req.session.latestReigon = region;
+    }
+
+
+    nameLower = funcs.FormatName(name);
+    // Player Object helps keep me sane, although there's probably a better way to do it
+    var player = new Player(name, nameLower, region, season);
+
+    // Construct URL string
+    urlString = "https://"
+        + region
+        + ".api.pvp.net/api/lol/"
+        + region
+        + "/v1.4/summoner/by-name/"
+        + name
+        + "?api_key="
+        + apiKey;
+
+    rp(urlString)
+        .then(function (jsonString) {
+
+            var data = JSON.parse(jsonString);
+            player.setPlayerData(jsonString);
+            var playerId = data[nameLower]['id'];
+            var rankedQuery = "https://"
+                + region
+                + ".api.pvp.net/api/lol/"
+                + region
+                + "/v1.3/stats/by-summoner/"
+                + playerId
+                + "/ranked?season=SEASON"
+                + season
+                + "&api_key="
+                + apiKey;
+
+            var regionCode = funcs.getRegionCode(region);
+
+            var masteryQuery = "https://"
+                + region
+                + ".api.pvp.net/championmastery/location/"
+                + regionCode
+                + "/player/"
+                + playerId
+                + "/champions?api_key="
+                + apiKey;
+
+
+            rp(rankedQuery)
+                .then(function (jsonString) {
+                    player.setWinrateData(jsonString);
+                    rp(masteryQuery)
+                        .then(function (jsonString) {
+                            player.setMasteryData(jsonString);
+                            var rankedMasteryList = player.calc();
+                            req.session.player = player;
+                            res.redirect(region + '/summoner/' + name + '/' + season);
+
+
+                        })
+                        .catch(function (err) {
+                            req.flash('error', 'Summoner "' + name + '" has no mastery scores');
+                            res.redirect('/');
+                        });
+                })
+                .catch(function (err) {
+                    req.flash('error', 'Summoner "' + name + '" is not ranked');
+                    res.redirect('/');
+                });
+
+        })
+        .catch(function (err) {
+            req.flash('error', 'Couldn\'t find the summoner "' + name + '" in ' + funcs.getRegionName(region));
+            res.redirect('/');
+        });
+
+
+});
+
+router.get('/:region/summoner/:name/:season', function (req, res, next) {
+    // if someone comes to a shared link, we have to
+    if (!req.session.player) {
+        var name = req.params.name;
+        var region = req.params.region;
+        var season = req.params.season;
+        res.redirect('/submit?summoner=' + name + "&region=" + region + "&season=" + season)
+    } else {
+        var player = req.session.player;
+        var latestRegion = req.session.latestReigon;
+        req.session.player = null;
+
+        res.render('result', {
+            title: siteTitle,
+            pname: player.name,
+            picon: player.profileID,
+            plvl: player.lvl,
+            pRankedMasteryList: player._rankedMasteryList,
+            highestMastery: player._rankedMasteryList[0]['key'],
+            chartData: player._chartData,
+            version: "6.14.2",
+            year: year,
+            latestRegion: latestRegion
+        })
+    }
+
+
+
+});
+router.get('/:name', function (req, res, next) {
+    var name = req.params.name;
+    // setup to allow more pages in the future
+    var pages = ["about"];
+    var pageNames = ["About"];
+    var latestRegion = req.session.latestRegion;
+
+    if (pages.indexOf(name) > -1) {
+        fs.readFile('./page-' + name + ".md", 'utf-8', function (err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+
+                console.log(data);
+                console.log(marked(data));
+                res.render('page', {
+                    title: siteTitle,
+                    pagetitle: pageNames[pages.indexOf(name)],
+                    cssidentifier: 'page',
+                    content: marked(data),
+                    year: year,
+                    latestRegion: latestRegion
+                });
+            }
+        })
+
+    } else {
+        res.status(404).render('error', {
+            status: "404",
+            message: "Page Not Found",
+            extended: "Oops! The page you were looking for can't be found.",
+            cssidentifier: "error-404"
+        });
+    }
+});
+
+
+module.exports = router;
