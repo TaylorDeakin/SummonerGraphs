@@ -86,6 +86,8 @@ router.get('/submit', function (req, res, next) {
                     rp(masteryQuery)
                         .then(function (jsonString) {
                             player.setMasteryData(jsonString);
+                            //aparently I forgot that I needed this
+                            var rankedMasteryList = player.calc();
                             req.session.player = player;
                             res.redirect(region + '/summoner/' + name + '/' + season);
 
