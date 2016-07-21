@@ -19,8 +19,8 @@
   background-position: center !important;
 }
 
-#mastery-winrate {
-  height: 705px;
+.mastery-plot {
+  height: 600px;
   margin-bottom: 15px;
 }
 
@@ -30,7 +30,7 @@
   font-weight: 700;
 }
 
-.jqplot-yaxis-tick::after {
+.plot-percent .jqplot-yaxis-tick::after {
   content: "%";
 }
 
