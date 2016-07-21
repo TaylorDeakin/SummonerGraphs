@@ -23,3 +23,6 @@ npm-debug.log
 #api key in a file
 private.js
 /public/js/plots.js
+public/js/plots.min.js
+routes/index.min.js
+scripts/player.min.js
