@@ -1,6 +1,6 @@
 var method = Player.prototype;
 
-var name, nameLower, region, season, playerData, winrateData, _winrateList, masteryData, _masteryList, profileID, lvl, playerID, _rankedMasteryList, _chartData;
+var name, nameLower, region, season, playerData, winrateData, _championList, masteryData, _masteryList, profileID, lvl, playerID, _rankedMasteryList, _winrateChartData, _kdaChartData,_turretChartData;
 
 function Player(name, nameLower, region, season) {
     this.name = name;
@@ -23,25 +23,29 @@ method.getName = function () {
     return this.name;
 };
 
-method.setWinrateData = function (stats) {
-    this.winrateData = JSON.parse(stats);
-    var winrateList = [];
-    var winrates = this.winrateData['champions'];
-    var len = winrates.length;
+method.setData = function (stats) {
+    this.championData = JSON.parse(stats);
+    var championList = [];
+    var champions = this.championData['champions'];
+    var len = champions.length;
     for (i = 0; i < len; i++) {
         var champ = {};
-        champ['id'] = winrates[i]['id'];
+        champ['id'] = champions[i]['id'];
         if (champ['id'] == 0) {
             continue;
         }
-        champ['wins'] = winrates[i]['stats']['totalSessionsWon'];
-        champ['losses'] = winrates[i]['stats']['totalSessionsLost'];
-        champ['winrate'] = champ['wins'] / (champ['wins'] + champ['losses']);
-        champ['winrate'] *= 100;
-        champ['winrate'] = champ['winrate'].toFixed(2);
-        winrateList.push(champ);
+        champ['wins'] = champions[i]['stats']['totalSessionsWon'];
+        champ['losses'] = champions[i]['stats']['totalSessionsLost'];
+        champ['deaths'] = champions[i]['stats']['totalDeathsPerSession'];
+        champ['kills'] = champions[i]['stats']['totalChampionKills'];
+        champ['assists'] = champions[i]['stats']['totalAssists'];
+        champ['damageDealt'] = champions[i]['stats']['totalDamageDealt'];
+        champ['turrets'] = champions[i]['stats']['totalTurretsKilled'];
+        champ['winrate'] = ((champ['wins'] / (champ['wins'] + champ['losses'])) * 100).toFixed(2);
+        champ['kda'] = (champ['kills'] + champ['assists']) / champ['deaths'];
+        championList.push(champ);
     }
-    this._winrateList = winrateList;
+    this._championList = championList;
 
 
 };
@@ -69,18 +73,19 @@ method.setPlayerData = function (data) {
     this.lvl = this.playerData[this.nameLower]['summonerLevel'];
 
 };
-method.calc = function () {
+method.calcKDA = function () {
     var rankedMastery = [];
-    var chartData = "";
+    var kdaChartData = "";
     var count = 0;
     for (i = 0; i < this._masteryList.length; i++) {
-        for (j = 0; j < this._winrateList.length; j++) {
-            if (this._winrateList[j].id == this._masteryList[i].id) {
+        for (j = 0; j < this._championList.length; j++) {
+            if (this._championList[j].id == this._masteryList[i].id) {
                 var champ = {};
-                champ['id'] = this._winrateList[j]['id'];
-                champ['wins'] = this._winrateList[j]['wins'];
-                champ['losses'] = this._winrateList[j]['losses'];
-                champ['winrate'] = this._winrateList[j]['winrate'];
+                champ['id'] = this._championList[j]['id'];
+                champ['kills'] = this._championList[j]['kills'];
+                champ['deaths'] = this._championList[j]['deaths'];
+                champ['assists'] = this._championList[j]['assists'];
+                champ['kda'] = this._championList[j]['kda'];
                 champ['level'] = this._masteryList[i]['level'];
                 champ['points'] = this._masteryList[i]['points'];
                 champ['name'] = getName(champ['id']);
@@ -88,7 +93,77 @@ method.calc = function () {
                 rankedMastery.push(champ);
 
                 if (count < 10) {
-                    chartData += (
+                    kdaChartData += (
+                    '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                }
+                count++;
+
+                break;
+            }
+        }
+
+    }
+
+    kdaChartData = kdaChartData.slice(0, -1);
+    console.log(kdaChartData);
+    this._kdaChartData = kdaChartData;
+
+    return _kdaChartData;
+};
+method.calcTowerKills = function () {
+    var rankedMastery = [];
+    var turretChartData = "";
+    var count = 0;
+    for (i = 0; i < this._masteryList.length; i++) {
+        for (j = 0; j < this._championList.length; j++) {
+            if (this._championList[j].id == this._masteryList[i].id) {
+                var champ = {};
+                champ['id'] = this._championList[j]['id'];
+                champ['turrets'] = this._championList[j]['turrets'];
+                champ['level'] = this._masteryList[i]['level'];
+                champ['points'] = this._masteryList[i]['points'];
+                champ['name'] = getName(champ['id']);
+                champ['key'] = getKey(champ['id']);
+                rankedMastery.push(champ);
+
+                if (count < 10) {
+                    turretChartData += (
+                    '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                }
+                count++;
+
+                break;
+            }
+        }
+
+    }
+
+    turretChartData = turretChartData.slice(0, -1);
+    console.log(turretChartData);
+    this._turretChartData = turretChartData;
+
+    return _turretChartData;
+};
+method.calcWinrate = function () {
+    var rankedMastery = [];
+    var winrateChartData = "";
+    var count = 0;
+    for (i = 0; i < this._masteryList.length; i++) {
+        for (j = 0; j < this._championList.length; j++) {
+            if (this._championList[j].id == this._masteryList[i].id) {
+                var champ = {};
+                champ['id'] = this._championList[j]['id'];
+                champ['wins'] = this._championList[j]['wins'];
+                champ['losses'] = this._championList[j]['losses'];
+                champ['winrate'] = this._championList[j]['winrate'];
+                champ['level'] = this._masteryList[i]['level'];
+                champ['points'] = this._masteryList[i]['points'];
+                champ['name'] = getName(champ['id']);
+                champ['key'] = getKey(champ['id']);
+                rankedMastery.push(champ);
+
+                if (count < 10) {
+                    winrateChartData += (
                     '[' + champ['points'] + ',' + champ['winrate'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                 }
                 count++;
@@ -99,13 +174,11 @@ method.calc = function () {
 
     }
 
-    chartData = chartData.slice(0, -1);
-    console.log(chartData);
-    this._chartData = chartData;
-
+    winrateChartData = winrateChartData.slice(0, -1);
+    console.log(winrateChartData);
+    this._winrateChartData = winrateChartData;
     this._rankedMasteryList = rankedMastery;
-
-    return this._rankedMasteryList;
+    return winrateChartData;
 
 };
 

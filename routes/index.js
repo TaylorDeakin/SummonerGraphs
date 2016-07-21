@@ -82,12 +82,14 @@ router.get('/submit', function (req, res, next) {
 
             rp(rankedQuery)
                 .then(function (jsonString) {
-                    player.setWinrateData(jsonString);
+                    player.setData(jsonString);
                     rp(masteryQuery)
                         .then(function (jsonString) {
                             player.setMasteryData(jsonString);
                             //aparently I forgot that I needed this
-                            var rankedMasteryList = player.calc();
+                            player.calcWinrate();
+                            player.calcKDA();
+                            player.calcTowerKills();
                             req.session.player = player;
                             res.redirect(region + '/summoner/' + name + '/' + season);
 
@@ -101,6 +103,7 @@ router.get('/submit', function (req, res, next) {
                                 var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
                                 res.redirect(errorString);
                             } else {
+                                console.log(err);
                                 req.flash('error', 'Summoner "' + name + '" has no mastery scores');
                                 res.redirect('/');
                             }
@@ -156,7 +159,9 @@ router.get('/:region/summoner/:name/:season', function (req, res, next) {
             plvl: player.lvl,
             pRankedMasteryList: player._rankedMasteryList,
             highestMastery: player._rankedMasteryList[0]['key'],
-            chartData: player._chartData,
+            winrateChartData: player._winrateChartData,
+            kdaChartData: player._kdaChartData,
+            turretChartData: player._turretChartData,
             version: "6.14.2",
             year: year,
             latestRegion: latestRegion
