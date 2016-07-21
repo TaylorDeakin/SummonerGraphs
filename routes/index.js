@@ -87,9 +87,7 @@ router.get('/submit', function (req, res, next) {
                         .then(function (jsonString) {
                             player.setMasteryData(jsonString);
                             //aparently I forgot that I needed this
-                            player.calcWinrate();
-                            player.calcKDA();
-                            player.calcTowerKills();
+                            player.calcAllTheThings();
                             req.session.player = player;
                             res.redirect(region + '/summoner/' + name + '/' + season);
 
@@ -159,9 +157,12 @@ router.get('/:region/summoner/:name/:season', function (req, res, next) {
             plvl: player.lvl,
             pRankedMasteryList: player._rankedMasteryList,
             highestMastery: player._rankedMasteryList[0]['key'],
-            winrateChartData: player._winrateChartData,
-            kdaChartData: player._kdaChartData,
-            turretChartData: player._turretChartData,
+            winrateChartData: player._winrateData,
+            kdaChartData: player._kdaData,
+            turretChartData: player._turretData,
+            minionsChartData: player._minionData,
+            damageDealtChartData: player._damageDealtData,
+            goldChartData: player._goldData,
             version: "6.14.2",
             year: year,
             latestRegion: latestRegion

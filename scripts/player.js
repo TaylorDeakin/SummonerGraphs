@@ -1,6 +1,16 @@
 var method = Player.prototype;
 
-var name, nameLower, region, season, playerData, winrateData, _championList, masteryData, _masteryList, profileID, lvl, playerID, _rankedMasteryList, _winrateChartData, _kdaChartData,_turretChartData;
+/*
+ this._turretData = turretData.slice(0, -1);
+ this._kdaData = kdaData.slice(0, -1);
+ this._firstBloodData = firstBloodData.slice(0, -1);
+ this._winrateData = winrateData.slice(0, -1);
+ this._damageDealtData = damageDealtData.slice(0, -1);
+ this._goldData = goldData.slice(0, -1);
+ this._minionData = minionData.slice(0, -1);
+ */
+
+var name, nameLower, region, season, playerData, _championList, profileID, lvl, playerID, _rankedMasteryList, _turretData, _kdaData, _firstBloodData, _winrateData, _damageDealtData, _goldData, _minionData;
 
 function Player(name, nameLower, region, season) {
     this.name = name;
@@ -40,13 +50,15 @@ method.setData = function (stats) {
         champ['kills'] = champions[i]['stats']['totalChampionKills'];
         champ['assists'] = champions[i]['stats']['totalAssists'];
         champ['damageDealt'] = champions[i]['stats']['totalDamageDealt'];
+        champ['firstBlood'] = champions[i]['stats']['totalFirstBlood'];
+        champ['minions'] = champions[i]['stats']['totalMinionKills'];
+        champ['gold'] = champions[i]['stats']['totalGoldEarned'];
         champ['turrets'] = champions[i]['stats']['totalTurretsKilled'];
         champ['winrate'] = ((champ['wins'] / (champ['wins'] + champ['losses'])) * 100).toFixed(2);
         champ['kda'] = (champ['kills'] + champ['assists']) / champ['deaths'];
         championList.push(champ);
     }
     this._championList = championList;
-
 
 };
 method.setMasteryData = function (stats) {
@@ -61,11 +73,7 @@ method.setMasteryData = function (stats) {
         champ['points'] = this.masteryData[i]['championPoints'];
         masteryList.push(champ);
     }
-
-
     this._masteryList = masteryList;
-
-
 };
 method.setPlayerData = function (data) {
     this.playerData = JSON.parse(data);
@@ -73,46 +81,9 @@ method.setPlayerData = function (data) {
     this.lvl = this.playerData[this.nameLower]['summonerLevel'];
 
 };
-method.calcKDA = function () {
+method.calcAllTheThings = function () {
     var rankedMastery = [];
-    var kdaChartData = "";
-    var count = 0;
-    for (i = 0; i < this._masteryList.length; i++) {
-        for (j = 0; j < this._championList.length; j++) {
-            if (this._championList[j].id == this._masteryList[i].id) {
-                var champ = {};
-                champ['id'] = this._championList[j]['id'];
-                champ['kills'] = this._championList[j]['kills'];
-                champ['deaths'] = this._championList[j]['deaths'];
-                champ['assists'] = this._championList[j]['assists'];
-                champ['kda'] = this._championList[j]['kda'];
-                champ['level'] = this._masteryList[i]['level'];
-                champ['points'] = this._masteryList[i]['points'];
-                champ['name'] = getName(champ['id']);
-                champ['key'] = getKey(champ['id']);
-                rankedMastery.push(champ);
-
-                if (count < 10) {
-                    kdaChartData += (
-                    '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                }
-                count++;
-
-                break;
-            }
-        }
-
-    }
-
-    kdaChartData = kdaChartData.slice(0, -1);
-    console.log(kdaChartData);
-    this._kdaChartData = kdaChartData;
-
-    return _kdaChartData;
-};
-method.calcTowerKills = function () {
-    var rankedMastery = [];
-    var turretChartData = "";
+    var turretData =  minionData = firstBloodData =  kdaData =  winrateData = damageDealtData =  goldData = "";
     var count = 0;
     for (i = 0; i < this._masteryList.length; i++) {
         for (j = 0; j < this._championList.length; j++) {
@@ -120,68 +91,52 @@ method.calcTowerKills = function () {
                 var champ = {};
                 champ['id'] = this._championList[j]['id'];
                 champ['turrets'] = this._championList[j]['turrets'];
-                champ['level'] = this._masteryList[i]['level'];
-                champ['points'] = this._masteryList[i]['points'];
-                champ['name'] = getName(champ['id']);
-                champ['key'] = getKey(champ['id']);
-                rankedMastery.push(champ);
-
-                if (count < 10) {
-                    turretChartData += (
-                    '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                }
-                count++;
-
-                break;
-            }
-        }
-
-    }
-
-    turretChartData = turretChartData.slice(0, -1);
-    console.log(turretChartData);
-    this._turretChartData = turretChartData;
-
-    return _turretChartData;
-};
-method.calcWinrate = function () {
-    var rankedMastery = [];
-    var winrateChartData = "";
-    var count = 0;
-    for (i = 0; i < this._masteryList.length; i++) {
-        for (j = 0; j < this._championList.length; j++) {
-            if (this._championList[j].id == this._masteryList[i].id) {
-                var champ = {};
-                champ['id'] = this._championList[j]['id'];
-                champ['wins'] = this._championList[j]['wins'];
-                champ['losses'] = this._championList[j]['losses'];
+                champ['minions'] = this._championList[j]['minions'];
+                champ['gold'] = this._championList[j]['gold'];
+                champ['firstBlood'] = this._championList[j]['firstBlood'];
+                champ['kda'] = this._championList[j]['kda'];
                 champ['winrate'] = this._championList[j]['winrate'];
+                champ['damageDealt'] = this._championList[j]['damageDealt'];
                 champ['level'] = this._masteryList[i]['level'];
                 champ['points'] = this._masteryList[i]['points'];
                 champ['name'] = getName(champ['id']);
                 champ['key'] = getKey(champ['id']);
                 rankedMastery.push(champ);
-
                 if (count < 10) {
-                    winrateChartData += (
+                    turretData += (
+                    '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    kdaData += (
+                    '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    firstBloodData += (
+                    '[' + champ['points'] + ',' + champ['firstBlood'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    winrateData += (
                     '[' + champ['points'] + ',' + champ['winrate'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    damageDealtData += (
+                    '[' + champ['points'] + ',' + champ['damageDealt'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    goldData += (
+                    '[' + champ['points'] + ',' + champ['gold'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    minionData += (
+                    '[' + champ['points'] + ',' + champ['minions'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+
                 }
                 count++;
-
                 break;
             }
         }
 
     }
 
-    winrateChartData = winrateChartData.slice(0, -1);
-    console.log(winrateChartData);
-    this._winrateChartData = winrateChartData;
+    this._turretData = turretData.slice(0, -1);
+    this._kdaData = kdaData.slice(0, -1);
+    this._firstBloodData = firstBloodData.slice(0, -1);
+    this._winrateData = winrateData.slice(0, -1);
+    this._damageDealtData = damageDealtData.slice(0, -1);
+    this._goldData = goldData.slice(0, -1);
+    this._minionData = minionData.slice(0, -1);
+
     this._rankedMasteryList = rankedMastery;
-    return winrateChartData;
 
 };
-
 
 function getName(id) {
     champList = [];

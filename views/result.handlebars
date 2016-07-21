@@ -2,7 +2,7 @@
     <div class="container">
         {{>navbar}}
         <div class="profile"
-             style="background: url('http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{highestMastery}}_0.jpg'); background-position: 50% 25%">
+             style="background: url('http://ddragon.leagueoflegends.com/cdn/img/champion/splash/{{highestMastery}}_0.jpg'); background-position: 75% 25%">
             <img src="http://ddragon.leagueoflegends.com/cdn/{{version}}/img/profileicon/{{picon}}.png" alt=""
                  class="profile-icon align-left">
             <h2 class="player-title">{{pname}}</h2>
@@ -11,21 +11,44 @@
             <h2 class="section-title">Winrate vs Champion Mastery Points</h2>
             <p></p>
             <div id="mastery-winrate-tooltip"></div>
-            <div id="mastery-winrate" class="mastery-winrate-plot"></div>
+            <div id="mastery-winrate" class="mastery-plot plot-percent"></div>
         </div>
+        <hr>
         <div class="row">
             <h2 class="section-title">KDA vs Champion Mastery Points</h2>
-            <p></p>
+            <p>Your Kill/Death/Assist ratio, using the formula (K+A)÷D </p>
             <div id="mastery-kda-tooltip"></div>
-            <div id="mastery-kda" class="mastery-kda-plot"></div>
+            <div id="mastery-kda" class="mastery-plot"></div>
         </div>
+        <hr>
+        <div class="row">
+            <h2 class="section-title">Total Damage Dealt vs Champion Mastery Points</h2>
+            <p>Total Damage encompasses all forms of damage</p>
+            <div id="mastery-damage-tooltip"></div>
+            <div id="mastery-damage" class="mastery-plot"></div>
+        </div>
+        <hr>
+        <div class="row">
+            <h2 class="section-title">Minions Killed vs Champion Mastery Points</h2>
+            <p></p>
+            <div id="mastery-minions-tooltip"></div>
+            <div id="mastery-minions" class="mastery-plot"></div>
+        </div>
+        <hr>
+        <div class="row">
+            <h2 class="section-title">Gold Earned vs Champion Mastery Points</h2>
+            <p></p>
+            <div id="mastery-gold-tooltip"></div>
+            <div id="mastery-gold" class="mastery-plot"></div>
+        </div>
+        <hr>
         <div class="row">
             <h2 class="section-title">Turrets Destroyed vs Champion Mastery Points</h2>
             <p></p>
             <div id="mastery-tower-tooltip"></div>
-            <div id="mastery-tower" class="mastery-tower-plot"></div>
+            <div id="mastery-tower" class="mastery-plot"></div>
         </div>
-
+        <hr>
         <div class="ranking-list data-section">
             <h2 class="section-title">Individual Champion Summary</h2>
             <p>Compare each individual champion's winrate and mastery level</p>
@@ -37,7 +60,7 @@
                             <div class="mastery-info">
                                 <h3>{{name}}</h3>
                                 <p>L{{level}} | {{winrate}}%
-                                <br>{{wins}}W | {{losses}}L</p>
+                                    <br>{{wins}}W | {{losses}}L</p>
                             </div>
                         </div>
 
@@ -52,225 +75,16 @@
 
 <script src="/js/jqplot-combined.min.js"></script>
 <script>
-    $(document).ready(function () {
-        //Get Data for chart
-        var winrateData = [{{{winrateChartData}}}];
-        var kdaData = [{{{kdaChartData}}}];
-        var towerData = [{{{turretChartData}}}];
-
-        //create chart
-        plot1 = $.jqplot('mastery-winrate', [winrateData], {
-            seriesDefaults: {
-                renderer: $.jqplot.BubbleRenderer,
-                rendererOptions: {
-                    autoscalePointsFactor: -0.25,
-                    autoscaleMultiplier: 0.55,
-                    bubbleAlpha: 0.7,
-                    highlightAlpha: 1
-                },
-                shadow: true,
-                shadowAlpha: 0.05,
-
-            },
-            axes: {
-                xaxis: {
-                    pad: 0,
-                    tickOptions: {
-                        showGridline: true
-                    },
-                    showTicks: true,
-                    drawMinorTickMarks: false,
-                    label: 'Mastery Points',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily:  "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010'
-                    },
-                },
-                yaxis: {
-                    showTicks: true,
-                    label: 'Winrate',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily: "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010',
-
-                    },
-                }
-            },
-            highlighter: {
-                show: true,
-                tooltipAxes: 'yx',
-                yvalues: 1,
-                tooltipOffset: 20,
-                tooltipFadeSpeed: 'def',
-                tooltipLocation: 'n',
-                formatString: 'Winrate: %s%<br>Mastery Points: %s'
-            }
-
-        });
-
-        plot2 = $.jqplot('mastery-kda', [kdaData], {
-            seriesDefaults: {
-                renderer: $.jqplot.BubbleRenderer,
-                rendererOptions: {
-                    autoscalePointsFactor: -0.25,
-                    autoscaleMultiplier: 0.55,
-                    bubbleAlpha: 0.7,
-                    highlightAlpha: 1
-                },
-                shadow: true,
-                shadowAlpha: 0.05,
-
-            },
-            axes: {
-                xaxis: {
-                    pad: 0,
-                    tickOptions: {
-                        showGridline: true
-                    },
-                    showTicks: true,
-                    drawMinorTickMarks: false,
-                    label: 'Mastery Points',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily:  "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010'
-                    },
-                },
-                yaxis: {
-                    showTicks: true,
-                    label: 'KDA',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily: "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010',
-
-                    },
-                }
-            },
-            highlighter: {
-                show: true,
-                tooltipAxes: 'yx',
-                yvalues: 1,
-                tooltipOffset: 20,
-                tooltipFadeSpeed: 'def',
-                tooltipLocation: 'n',
-                formatString: 'KDA: %s<br>Mastery Points: %s'
-            }
-
-        });
-        plot3 = $.jqplot('mastery-tower', [towerData], {
-            seriesDefaults: {
-                renderer: $.jqplot.BubbleRenderer,
-                rendererOptions: {
-                    autoscalePointsFactor: -0.25,
-                    autoscaleMultiplier: 0.55,
-                    bubbleAlpha: 0.7,
-                    highlightAlpha: 1
-                },
-                shadow: true,
-                shadowAlpha: 0.05,
-
-            },
-            axes: {
-                xaxis: {
-                    pad: 0,
-                    tickOptions: {
-                        showGridline: true
-                    },
-                    showTicks: true,
-                    drawMinorTickMarks: false,
-                    label: 'Mastery Points',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily:  "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010'
-                    },
-                },
-                yaxis: {
-                    showTicks: true,
-                    label: 'KDA',
-                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
-                    labelOptions: {
-                        fontFamily: "'Muli', sans-serif",
-                        fontSize: '16pt',
-                        textColor: '#101010',
-
-                    },
-                }
-            },
-            highlighter: {
-                show: true,
-                tooltipAxes: 'yx',
-                yvalues: 1,
-                tooltipOffset: 20,
-                tooltipFadeSpeed: 'def',
-                tooltipLocation: 'n',
-                formatString: 'Turret Kills: %s<br>Mastery Points: %s'
-            }
-
-        });
-
-        GraphImages();
-        FixAxes();
-    });
-
-    $(window).resize(function () {
-        plot1.replot({resetAxes: true});
-        GraphImages();
-        FixAxes();
-
-    });
-
-    var GraphImages = function () {
-        var count = $('.jqplot-bubble-label').length;
-
-        for (var i = 0; i < count; i++) {
-            var data = $('.jqplot-bubble-label')[i].innerHTML;
-            result = data.split(',');
-            var champName = result[0];
-            var lvl = result[1];
-            champName = champName.replace(/ |'/g, '');
-            var current = $('.jqplot-bubble-label')[i];
-            var bgImg = "http://ddragon.leagueoflegends.com/cdn/{{version}}/img/champion/" + champName;
-            $(current).css("background", "url(" + bgImg + ")");
-            $(current).append("<span class='sprite sprite-champ-mastery-" + lvl +  "'></span>");
-        }
-    };
-
-    var FixAxes = function () {
-        var count = $('.jqplot-yaxis-tick').length;
-
-        for (var i = 0; i < count; i++) {
-            var current = $('.jqplot-yaxis-tick')[i];
-            var value = current.innerHTML;
-
-            if (value > 100 || value < 0) {
-                $(current).hide();
-            }
+    //Get Data for chart
+    var winrateData = [{{{winrateChartData}}}];
+    var kdaData = [{{{kdaChartData}}}];
+    var towerData = [{{{turretChartData}}}];
+    var bloodData = [{{{firstBloodChartData}}}];
+    var damageDealtData = [{{{damageDealtChartData}}}];
+    var minionsData = [{{{minionsChartData}}}];
+    var goldData = [{{{goldChartData}}}];
+    var version = "{{version}}";
 
 
-        }
-        var count = $('.jqplot-xaxis-tick').length;
-
-        for (var i = 0; i < count; i++) {
-            var current = $('.jqplot-xaxis-tick')[i];
-            var value = current.innerHTML;
-
-            if (value < 0) {
-                $(current).hide();
-            } else if (i % 2 == 0) {
-                $(current).hide();
-            }
-
-
-        }
-
-    }
 </script>
+<script src="/js/plots.min.js"></script>
