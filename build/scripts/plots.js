@@ -100,7 +100,7 @@ $(document).ready(function () {
             tooltipOffset: 20,
             tooltipFadeSpeed: 'def',
             tooltipLocation: 'n',
-            formatString: 'KDA: %s<br>Mastery Points: %s'
+            formatString: 'KDA: %.1f<br>Mastery Points: %s'
         }
 
     });
