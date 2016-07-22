@@ -49,8 +49,7 @@
 }
 
 .sprite {
-  background-image: url(../img/spritesheet.png);
-  background-repeat: no-repeat;
+  background: url(../img/spritesheet.png) no-repeat;
   display: block;
   margin-top: 25px;
   margin-left: -4.5px;

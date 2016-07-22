@@ -26,3 +26,4 @@ private.js
 public/js/plots.min.js
 routes/index.min.js
 scripts/player.min.js
+scripts/functions.min.js

@@ -318,6 +318,8 @@ $(document).ready(function () {
     });
     GraphImages();
     FixAxes();
+
+    $("#loading").setTimeout(remove(),300);
 });
 $(window).resize(debouncer(function () {
     plot1.replot({resetAxes: true});
@@ -330,7 +332,7 @@ $(window).resize(debouncer(function () {
     GraphImages();
     FixAxes();
 }));
-var GraphImages = function () {
+    function GraphImages() {
     var count = $('.jqplot-bubble-label').length;
 
     for (var i = 0; i < count; i++) {
@@ -344,8 +346,9 @@ var GraphImages = function () {
         $(current).css("background", "url(" + bgImg + ")");
         $(current).append("<span class='sprite sprite-champ-mastery-" + lvl + "'></span>");
     }
-};
-var FixAxes = function () {
+}
+
+function FixAxes () {
     var count = $('.plot-percent>.jqplot-yaxis>.jqplot-yaxis-tick').length;
 
     for (var i = 0; i < count; i++) {
@@ -372,7 +375,7 @@ var FixAxes = function () {
 
 
     }
-};
+}
 
 function debouncer (func, timeout) {
     var timeoutID, timeout = timeout || 200;

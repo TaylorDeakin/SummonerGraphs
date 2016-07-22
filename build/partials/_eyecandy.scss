@@ -42,3 +42,8 @@
   width: 90px;
   margin-top: 20px;
 }
+
+.delay-1{
+  -webkit-animation-delay: 2s; /* Chrome, Safari, Opera */
+  animation-delay: 2s;
+}
