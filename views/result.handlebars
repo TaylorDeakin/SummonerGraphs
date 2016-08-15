@@ -7,9 +7,12 @@
                  class="profile-icon align-left">
             <h2 class="player-title">{{pname}}</h2>
         </div>
+        <noscript>
+            <h3>Javascript Required</h3>
+            <p>If you want to see all of the awesome graphs that we've created, please enable javascript</p>
+        </noscript>
         <div class="row">
             <h2 class="section-title">Winrate vs Champion Mastery Points</h2>
-            <p></p>
             <div id="mastery-winrate-tooltip"></div>
             <div id="mastery-winrate" class="mastery-plot plot-percent"></div>
         </div>
@@ -45,7 +48,7 @@
         </div>
         <div class="ranking-list data-section">
             <h2 class="section-title">Individual Champion Summary</h2>
-            <p>Compare each individual champion's winrate and mastery level</p>
+            <p>Compare each individual champion's winrate and mastery level against other statistics</p>
             {{#grouping pRankedMasteryList 3}}
                 <div class="row">
                     {{#each this}}
@@ -55,6 +58,7 @@
                                 <h3>{{name}}</h3>
                                 <p>L{{level}} | {{winrate}}%
                                     <br>{{wins}}W | {{losses}}L</p>
+
                             </div>
                         </div>
 
