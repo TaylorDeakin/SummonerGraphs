@@ -163,7 +163,7 @@ router.get('/:region/summoner/:name/:season', function (req, res, next) {
             minionsChartData: player._minionData,
             damageDealtChartData: player._damageDealtData,
             goldChartData: player._goldData,
-            version: "6.16.1",
+	    version: "6.16.1",
             year: year,
             latestRegion: latestRegion
         })
