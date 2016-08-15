@@ -105,21 +105,34 @@ method.calcAllTheThings = function () {
                 champ['key'] = getKey(champ['id']);
                 rankedMastery.push(champ);
                 if (count < 10) {
-                    turretData += (
-                    '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    kdaData += (
-                    '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    firstBloodData += (
-                    '[' + champ['points'] + ',' + champ['firstBlood'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    winrateData += (
-                    '[' + champ['points'] + ',' + champ['winrate'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    damageDealtData += (
-                    '[' + champ['points'] + ',' + champ['damageDealt'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    goldData += (
-                    '[' + champ['points'] + ',' + champ['gold'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-                    minionData += (
-                    '[' + champ['points'] + ',' + champ['minions'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
-
+                    if(champ['turrets'] > 0){
+                        turretData += (
+                        '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['kda'] > 0){
+                        kdaData += (
+                        '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['firstBlood'] > 0){
+                        firstBloodData += (
+                        '[' + champ['points'] + ',' + champ['firstBlood'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['winrate'] > 0){
+                        winrateData += (
+                        '[' + champ['points'] + ',' + champ['winrate'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['damageDealt'] > 0){
+                        damageDealtData += (
+                        '[' + champ['points'] + ',' + champ['damageDealt'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['gold'] > 0){
+                        goldData += (
+                        '[' + champ['points'] + ',' + champ['gold'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
+                    if(champ['minions'] > 0){
+                        minionData += (
+                        '[' + champ['points'] + ',' + champ['minions'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
+                    }
                 }
                 count++;
                 break;
@@ -272,6 +285,7 @@ function getName(id) {
     this._champNameList[267] = "Nami";
     this._champNameList[4] = "Twisted Fate";
     this._champNameList[81] = "Ezreal";
+
     return this._champNameList[id];
 
 };
