@@ -154,6 +154,7 @@ method.calcAllTheThings = function () {
 };
 function getName(id) {
     this._champNameList = [];
+    this._champNameList[240] = "Kled";
     this._champNameList[143] = "Zyra";
     this._champNameList[266] = "Aatrox";
     this._champNameList[50] = "Swain";
@@ -293,6 +294,7 @@ function getName(id) {
 function getKey(id) {
 
     this._champNameList = [];
+    this._champNameList[240] = "Kled";
     this._champNameList[143] = "Zyra";
     this._champNameList[266] = "Aatrox";
     this._champNameList[50] = "Swain";
