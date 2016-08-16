@@ -5,7 +5,7 @@ var date = new Date();
 var year = date.getFullYear();
 var marked = require('marked');
 var fs = require('fs');
-
+var rp = require('request-promise');
 var siteTitle = "Summoner Graphs";
 
 /* GET home page. */
@@ -23,7 +23,7 @@ router.get('/submit', function (req, res, next) {
     var validator = require('validator');
     var request = require('request');
     var fs = require('fs');
-    var rp = require('request-promise');
+
     var Player = require('../scripts/player.js');
     var apiKey = require('../private').apiKey;
     var name, nameLower, region, season, retryAfter;
@@ -80,6 +80,7 @@ router.get('/submit', function (req, res, next) {
                 + apiKey;
 
 
+
             rp(rankedQuery)
                 .then(function (jsonString) {
                     player.setData(jsonString);
@@ -95,13 +96,11 @@ router.get('/submit', function (req, res, next) {
                         })
                         .catch(function (err) {
                             if (err.statusCode == 429) {
-                                console.log(err.response.headers);
-                                console.log("Mastery Score Query");
                                 retryAfter = err.response.headers.retry - after;
                                 var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
                                 res.redirect(errorString);
                             } else {
-                                console.log(err);
+                                //console.log(err);
                                 req.flash('error', 'Summoner "' + name + '" has no mastery scores');
                                 res.redirect('/');
                             }
@@ -110,11 +109,11 @@ router.get('/submit', function (req, res, next) {
                 })
                 .catch(function (err) {
                     if (err.statusCode == 429) {
-                        console.log(err.response.headers);
+                        //console.log(err.response.headers);
                         retryAfter = err.response.headers.retry - after;
                         var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
                         res.redirect(errorString);
-                        console.log("Ranked Query ");
+                        //console.log("Ranked Query ");
                     } else {
                         req.flash('error', 'Summoner "' + name + '" is not ranked');
                         res.redirect('/');
@@ -124,11 +123,11 @@ router.get('/submit', function (req, res, next) {
         })
         .catch(function (err) {
             if (err.statusCode == 429) {
-                console.log(err.response.headers);
+                //console.log(err.response.headers);
                 retryAfter = err.response.headers.retry - after;
                 var errorString = '/limit?wait=' + retryAfter + '&summoner=' + name + '&region=' + region + '&season=' + season;
                 res.redirect(errorString);
-                console.log("Player Query");
+                //console.log("Player Query");
             } else {
                 req.flash('error', 'Couldn\'t find the summoner "' + name + '" in ' + funcs.getRegionName(region));
                 res.redirect('/');
@@ -139,34 +138,62 @@ router.get('/submit', function (req, res, next) {
 });
 
 router.get('/:region/summoner/:name/:season', function (req, res, next) {
+    var name = req.params.name;
+    var region = req.params.region;
+    var season = req.params.season;
     // if someone comes to a shared link, we have to
     if (!req.session.player) {
-        var name = req.params.name;
-        var region = req.params.region;
-        var season = req.params.season;
         res.redirect('/submit?summoner=' + name + "&region=" + region + "&season=" + season)
     } else {
         var player = req.session.player;
         var latestRegion = req.session.latestReigon;
         req.session.player = null;
+        var apiKey = require('../private').apiKey;
+        var versionQuery = "https://"
+            + "global.api.pvp.net/api/lol/static-data/"
+            + region
+            + "/v1.2/versions?api_key="
+            + apiKey;
+        rp(versionQuery)
+            .then(function(data){
+                res.render('result', {
+                    title: siteTitle,
+                    pname: player.name,
+                    picon: player.profileID,
+                    plvl: player.lvl,
+                    pRankedMasteryList: player._rankedMasteryList,
+                    highestMastery: player._rankedMasteryList[0]['key'],
+                    winrateChartData: player._winrateData,
+                    kdaChartData: player._kdaData,
+                    turretChartData: player._turretData,
+                    minionsChartData: player._minionData,
+                    damageDealtChartData: player._damageDealtData,
+                    goldChartData: player._goldData,
+                    version: JSON.parse(data)[0],
+                    year: year,
+                    latestRegion: latestRegion
+                })
+            })
+            .catch(function(err){
+                res.render('result', {
+                    title: siteTitle,
+                    pname: player.name,
+                    picon: player.profileID,
+                    plvl: player.lvl,
+                    pRankedMasteryList: player._rankedMasteryList,
+                    highestMastery: player._rankedMasteryList[0]['key'],
+                    winrateChartData: player._winrateData,
+                    kdaChartData: player._kdaData,
+                    turretChartData: player._turretData,
+                    minionsChartData: player._minionData,
+                    damageDealtChartData: player._damageDealtData,
+                    goldChartData: player._goldData,
+                    version: "6.16.1",
+                    year: year,
+                    latestRegion: latestRegion
+                })
+            });
 
-        res.render('result', {
-            title: siteTitle,
-            pname: player.name,
-            picon: player.profileID,
-            plvl: player.lvl,
-            pRankedMasteryList: player._rankedMasteryList,
-            highestMastery: player._rankedMasteryList[0]['key'],
-            winrateChartData: player._winrateData,
-            kdaChartData: player._kdaData,
-            turretChartData: player._turretData,
-            minionsChartData: player._minionData,
-            damageDealtChartData: player._damageDealtData,
-            goldChartData: player._goldData,
-	    version: "6.16.1",
-            year: year,
-            latestRegion: latestRegion
-        })
     }
 
 
@@ -181,7 +208,6 @@ router.get('/limit', function (req, res, next) {
         res.redirect('/');
     } else {
         setTimeout(function () {
-            console.log("time's up");
             res.redirect('/submit?summoner=' + name + "&region=" + region + "&season=" + season);
         }, wait * 1000);
     }
@@ -199,11 +225,12 @@ router.get('/:name', function (req, res, next) {
     if (pages.indexOf(name) > -1) {
         fs.readFile('./page-' + name + ".md", 'utf-8', function (err, data) {
             if (err) {
-                console.log(err);
+                res.status(500).render('error', {
+                    status: "500",
+                    message: "Server Error",
+                    extended: "Oops! We've encountered an error. Please try again later."
+                })
             } else {
-
-                console.log(data);
-                console.log(marked(data));
                 res.render('page', {
                     title: siteTitle,
                     pagetitle: pageNames[pages.indexOf(name)],
