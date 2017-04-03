@@ -42,7 +42,7 @@ router.get('/submit', function (req, res, next) {
     var player = new Player(name, nameLower, region, season);
 
     // Construct URL string
-    urlString = "https://"
+    var urlString = "https://"
         + region
         + ".api.pvp.net/api/lol/"
         + region
@@ -251,6 +251,5 @@ router.get('/:name', function (req, res, next) {
         });
     }
 });
-
 
 module.exports = router;

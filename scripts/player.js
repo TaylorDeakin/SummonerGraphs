@@ -1,23 +1,149 @@
 var method = Player.prototype;
 
-/*
- this._turretData = turretData.slice(0, -1);
- this._kdaData = kdaData.slice(0, -1);
- this._firstBloodData = firstBloodData.slice(0, -1);
- this._winrateData = winrateData.slice(0, -1);
- this._damageDealtData = damageDealtData.slice(0, -1);
- this._goldData = goldData.slice(0, -1);
- this._minionData = minionData.slice(0, -1);
- */
-
-var name, nameLower, region, season, playerData, _championList, profileID, lvl, playerID, _rankedMasteryList, _turretData, _kdaData, _firstBloodData, _winrateData, _damageDealtData, _goldData, _minionData;
+var name, nameLower, region, season, playerData, _championList, profileID, lvl, playerID, _rankedMasteryList,
+    _turretData, _kdaData, _firstBloodData, _winrateData, _damageDealtData, _goldData, _minionData, championLookup;
 
 function Player(name, nameLower, region, season) {
     this.name = name;
     this.nameLower = nameLower;
     this.region = region;
     this.season = season;
-
+    championLookup = {
+        "1": {"id": "Annie", "name": "Annie"},
+        "2": {"id": "Olaf", "name": "Olaf"},
+        "3": {"id": "Galio", "name": "Galio"},
+        "4": {"id": "TwistedFate", "name": "Twisted Fate"},
+        "5": {"id": "XinZhao", "name": "Xin Zhao"},
+        "6": {"id": "Urgot", "name": "Urgot"},
+        "7": {"id": "Leblanc", "name": "LeBlanc"},
+        "8": {"id": "Vladimir", "name": "Vladimir"},
+        "9": {"id": "Fiddlesticks", "name": "Fiddlesticks"},
+        "10": {"id": "Kayle", "name": "Kayle"},
+        "11": {"id": "MasterYi", "name": "Master Yi"},
+        "12": {"id": "Alistar", "name": "Alistar"},
+        "13": {"id": "Ryze", "name": "Ryze"},
+        "14": {"id": "Sion", "name": "Sion"},
+        "15": {"id": "Sivir", "name": "Sivir"},
+        "16": {"id": "Soraka", "name": "Soraka"},
+        "17": {"id": "Teemo", "name": "Teemo"},
+        "18": {"id": "Tristana", "name": "Tristana"},
+        "19": {"id": "Warwick", "name": "Warwick"},
+        "20": {"id": "Nunu", "name": "Nunu"},
+        "21": {"id": "MissFortune", "name": "Miss Fortune"},
+        "22": {"id": "Ashe", "name": "Ashe"},
+        "23": {"id": "Tryndamere", "name": "Tryndamere"},
+        "24": {"id": "Jax", "name": "Jax"},
+        "25": {"id": "Morgana", "name": "Morgana"},
+        "26": {"id": "Zilean", "name": "Zilean"},
+        "27": {"id": "Singed", "name": "Singed"},
+        "28": {"id": "Evelynn", "name": "Evelynn"},
+        "29": {"id": "Twitch", "name": "Twitch"},
+        "30": {"id": "Karthus", "name": "Karthus"},
+        "31": {"id": "Chogath", "name": "Cho'Gath"},
+        "32": {"id": "Amumu", "name": "Amumu"},
+        "33": {"id": "Rammus", "name": "Rammus"},
+        "34": {"id": "Anivia", "name": "Anivia"},
+        "35": {"id": "Shaco", "name": "Shaco"},
+        "36": {"id": "DrMundo", "name": "Dr. Mundo"},
+        "37": {"id": "Sona", "name": "Sona"},
+        "38": {"id": "Kassadin", "name": "Kassadin"},
+        "39": {"id": "Irelia", "name": "Irelia"},
+        "40": {"id": "Janna", "name": "Janna"},
+        "41": {"id": "Gangplank", "name": "Gangplank"},
+        "42": {"id": "Corki", "name": "Corki"},
+        "43": {"id": "Karma", "name": "Karma"},
+        "44": {"id": "Taric", "name": "Taric"},
+        "45": {"id": "Veigar", "name": "Veigar"},
+        "48": {"id": "Trundle", "name": "Trundle"},
+        "50": {"id": "Swain", "name": "Swain"},
+        "51": {"id": "Caitlyn", "name": "Caitlyn"},
+        "53": {"id": "Blitzcrank", "name": "Blitzcrank"},
+        "54": {"id": "Malphite", "name": "Malphite"},
+        "55": {"id": "Katarina", "name": "Katarina"},
+        "56": {"id": "Nocturne", "name": "Nocturne"},
+        "57": {"id": "Maokai", "name": "Maokai"},
+        "58": {"id": "Renekton", "name": "Renekton"},
+        "59": {"id": "JarvanIV", "name": "Jarvan IV"},
+        "60": {"id": "Elise", "name": "Elise"},
+        "61": {"id": "Orianna", "name": "Orianna"},
+        "62": {"id": "MonkeyKing", "name": "Wukong"},
+        "63": {"id": "Brand", "name": "Brand"},
+        "64": {"id": "LeeSin", "name": "Lee Sin"},
+        "67": {"id": "Vayne", "name": "Vayne"},
+        "68": {"id": "Rumble", "name": "Rumble"},
+        "69": {"id": "Cassiopeia", "name": "Cassiopeia"},
+        "72": {"id": "Skarner", "name": "Skarner"},
+        "74": {"id": "Heimerdinger", "name": "Heimerdinger"},
+        "75": {"id": "Nasus", "name": "Nasus"},
+        "76": {"id": "Nidalee", "name": "Nidalee"},
+        "77": {"id": "Udyr", "name": "Udyr"},
+        "78": {"id": "Poppy", "name": "Poppy"},
+        "79": {"id": "Gragas", "name": "Gragas"},
+        "80": {"id": "Pantheon", "name": "Pantheon"},
+        "81": {"id": "Ezreal", "name": "Ezreal"},
+        "82": {"id": "Mordekaiser", "name": "Mordekaiser"},
+        "83": {"id": "Yorick", "name": "Yorick"},
+        "84": {"id": "Akali", "name": "Akali"},
+        "85": {"id": "Kennen", "name": "Kennen"},
+        "86": {"id": "Garen", "name": "Garen"},
+        "89": {"id": "Leona", "name": "Leona"},
+        "90": {"id": "Malzahar", "name": "Malzahar"},
+        "91": {"id": "Talon", "name": "Talon"},
+        "92": {"id": "Riven", "name": "Riven"},
+        "96": {"id": "KogMaw", "name": "Kog'Maw"},
+        "98": {"id": "Shen", "name": "Shen"},
+        "99": {"id": "Lux", "name": "Lux"},
+        "101": {"id": "Xerath", "name": "Xerath"},
+        "102": {"id": "Shyvana", "name": "Shyvana"},
+        "103": {"id": "Ahri", "name": "Ahri"},
+        "104": {"id": "Graves", "name": "Graves"},
+        "105": {"id": "Fizz", "name": "Fizz"},
+        "106": {"id": "Volibear", "name": "Volibear"},
+        "107": {"id": "Rengar", "name": "Rengar"},
+        "110": {"id": "Varus", "name": "Varus"},
+        "111": {"id": "Nautilus", "name": "Nautilus"},
+        "112": {"id": "Viktor", "name": "Viktor"},
+        "113": {"id": "Sejuani", "name": "Sejuani"},
+        "114": {"id": "Fiora", "name": "Fiora"},
+        "115": {"id": "Ziggs", "name": "Ziggs"},
+        "117": {"id": "Lulu", "name": "Lulu"},
+        "119": {"id": "Draven", "name": "Draven"},
+        "120": {"id": "Hecarim", "name": "Hecarim"},
+        "121": {"id": "Khazix", "name": "Kha'Zix"},
+        "122": {"id": "Darius", "name": "Darius"},
+        "126": {"id": "Jayce", "name": "Jayce"},
+        "127": {"id": "Lissandra", "name": "Lissandra"},
+        "131": {"id": "Diana", "name": "Diana"},
+        "133": {"id": "Quinn", "name": "Quinn"},
+        "134": {"id": "Syndra", "name": "Syndra"},
+        "136": {"id": "AurelionSol", "name": "Aurelion Sol"},
+        "143": {"id": "Zyra", "name": "Zyra"},
+        "150": {"id": "Gnar", "name": "Gnar"},
+        "154": {"id": "Zac", "name": "Zac"},
+        "157": {"id": "Yasuo", "name": "Yasuo"},
+        "161": {"id": "Velkoz", "name": "Vel'Koz"},
+        "163": {"id": "Taliyah", "name": "Taliyah"},
+        "201": {"id": "Braum", "name": "Braum"},
+        "202": {"id": "Jhin", "name": "Jhin"},
+        "203": {"id": "Kindred", "name": "Kindred"},
+        "222": {"id": "Jinx", "name": "Jinx"},
+        "223": {"id": "TahmKench", "name": "Tahm Kench"},
+        "236": {"id": "Lucian", "name": "Lucian"},
+        "238": {"id": "Zed", "name": "Zed"},
+        "240": {"id": "Kled", "name": "Kled"},
+        "245": {"id": "Ekko", "name": "Ekko"},
+        "254": {"id": "Vi", "name": "Vi"},
+        "266": {"id": "Aatrox", "name": "Aatrox"},
+        "267": {"id": "Nami", "name": "Nami"},
+        "268": {"id": "Azir", "name": "Azir"},
+        "412": {"id": "Thresh", "name": "Thresh"},
+        "420": {"id": "Illaoi", "name": "Illaoi"},
+        "421": {"id": "RekSai", "name": "Rek'Sai"},
+        "429": {"id": "Kalista", "name": "Kalista"},
+        "432": {"id": "Bard", "name": "Bard"},
+        "164": {"id": "Camille", "name": "Camille"},
+        "427": {"id": "Ivern", "name": "Ivern"}
+    };
 }
 
 method.getPlayerData = function () {
@@ -83,7 +209,7 @@ method.setPlayerData = function (data) {
 };
 method.calcAllTheThings = function () {
     var rankedMastery = [];
-    var turretData =  minionData = firstBloodData =  kdaData =  winrateData = damageDealtData =  goldData = "";
+    var turretData = minionData = firstBloodData = kdaData = winrateData = damageDealtData = goldData = "";
     var count = 0;
     for (i = 0; i < this._masteryList.length; i++) {
         for (j = 0; j < this._championList.length; j++) {
@@ -105,31 +231,31 @@ method.calcAllTheThings = function () {
                 champ['key'] = getKey(champ['id']);
                 rankedMastery.push(champ);
                 if (count < 10) {
-                    if(champ['turrets'] > 0){
+                    if (champ['turrets'] > 0) {
                         turretData += (
                         '[' + champ['points'] + ',' + champ['turrets'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['kda'] > 0){
+                    if (champ['kda'] > 0) {
                         kdaData += (
                         '[' + champ['points'] + ',' + champ['kda'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['firstBlood'] > 0){
+                    if (champ['firstBlood'] > 0) {
                         firstBloodData += (
                         '[' + champ['points'] + ',' + champ['firstBlood'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['winrate'] > 0){
+                    if (champ['winrate'] > 0) {
                         winrateData += (
                         '[' + champ['points'] + ',' + champ['winrate'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['damageDealt'] > 0){
+                    if (champ['damageDealt'] > 0) {
                         damageDealtData += (
                         '[' + champ['points'] + ',' + champ['damageDealt'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['gold'] > 0){
+                    if (champ['gold'] > 0) {
                         goldData += (
                         '[' + champ['points'] + ',' + champ['gold'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
-                    if(champ['minions'] > 0){
+                    if (champ['minions'] > 0) {
                         minionData += (
                         '[' + champ['points'] + ',' + champ['minions'] + ', ' + 5 + ', {label: "' + champ['key'] + '.png,' + champ['level'] + '"}],');
                     }
@@ -153,281 +279,27 @@ method.calcAllTheThings = function () {
 
 };
 function getName(id) {
-    this._champNameList = [];
-    this._champNameList[240] = "Kled";
-    this._champNameList[143] = "Zyra";
-    this._champNameList[266] = "Aatrox";
-    this._champNameList[50] = "Swain";
-    this._champNameList[23] = "Tryndamere";
-    this._champNameList[18] = "Tristana";
-    this._champNameList[79] = "Gragas";
-    this._champNameList[6] = "Urgot";
-    this._champNameList[69] = "Cassiopeia";
-    this._champNameList[131] = "Diana";
-    this._champNameList[136] = "Aurelion Sol";
-    this._champNameList[54] = "Malphite";
-    this._champNameList[13] = "Ryze";
-    this._champNameList[33] = "Rammus";
-    this._champNameList[78] = "Poppy";
-    this._champNameList[29] = "Twitch";
-    this._champNameList[14] = "Sion";
-    this._champNameList[102] = "Shyvana";
-    this._champNameList[202] = "Jhin";
-    this._champNameList[154] = "Zac";
-    this._champNameList[1] = "Annie";
-    this._champNameList[236] = "Lucian";
-    this._champNameList[111] = "Nautilus";
-    this._champNameList[58] = "Renekton";
-    this._champNameList[43] = "Karma";
-    this._champNameList[245] = "Ekko";
-    this._champNameList[99] = "Lux";
-    this._champNameList[16] = "Soraka";
-    this._champNameList[103] = "Ahri";
-    this._champNameList[53] = "Blitzcrank";
-    this._champNameList[2] = "Olaf";
-    this._champNameList[41] = "Gangplank";
-    this._champNameList[112] = "Viktor";
-    this._champNameList[412] = "Thresh";
-    this._champNameList[27] = "Singed";
-    this._champNameList[36] = "Dr. Mundo";
-    this._champNameList[86] = "Garen";
-    this._champNameList[113] = "Sejuani";
-    this._champNameList[34] = "Anivia";
-    this._champNameList[133] = "Quinn";
-    this._champNameList[57] = "Maokai";
-    this._champNameList[120] = "Hecarim";
-    this._champNameList[127] = "Lissandra";
-    this._champNameList[19] = "Warwick";
-    this._champNameList[25] = "Morgana";
-    this._champNameList[101] = "Xerath";
-    this._champNameList[105] = "Fizz";
-    this._champNameList[119] = "Draven";
-    this._champNameList[28] = "Evelynn";
-    this._champNameList[91] = "Talon";
-    this._champNameList[238] = "Zed";
-    this._champNameList[114] = "Fiora";
-    this._champNameList[74] = "Heimerdinger";
-    this._champNameList[7] = "LeBlanc";
-    this._champNameList[68] = "Rumble";
-    this._champNameList[222] = "Jinx";
-    this._champNameList[37] = "Sona";
-    this._champNameList[21] = "Miss Fortune";
-    this._champNameList[82] = "Mordekaiser";
-    this._champNameList[201] = "Braum";
-    this._champNameList[96] = "Kog'Maw";
-    this._champNameList[44] = "Taric";
-    this._champNameList[55] = "Katarina";
-    this._champNameList[38] = "Kassadin";
-    this._champNameList[117] = "Lulu";
-    this._champNameList[59] = "Jarvan IV";
-    this._champNameList[22] = "Ashe";
-    this._champNameList[24] = "Jax";
-    this._champNameList[30] = "Karthus";
-    this._champNameList[429] = "Kalista";
-    this._champNameList[12] = "Alistar";
-    this._champNameList[223] = "Tahm Kench";
-    this._champNameList[122] = "Darius";
-    this._champNameList[63] = "Brand";
-    this._champNameList[67] = "Vayne";
-    this._champNameList[8] = "Vladimir";
-    this._champNameList[110] = "Varus";
-    this._champNameList[421] = "Rek'Sai";
-    this._champNameList[77] = "Udyr";
-    this._champNameList[84] = "Akali";
-    this._champNameList[89] = "Leona";
-    this._champNameList[163] = "Taliyah";
-    this._champNameList[126] = "Jayce";
-    this._champNameList[15] = "Sivir";
-    this._champNameList[134] = "Syndra";
-    this._champNameList[107] = "Rengar";
-    this._champNameList[80] = "Pantheon";
-    this._champNameList[72] = "Skarner";
-    this._champNameList[92] = "Riven";
-    this._champNameList[157] = "Yasuo";
-    this._champNameList[121] = "Kha'Zix";
-    this._champNameList[17] = "Teemo";
-    this._champNameList[42] = "Corki";
-    this._champNameList[75] = "Nasus";
-    this._champNameList[51] = "Caitlyn";
-    this._champNameList[35] = "Shaco";
-    this._champNameList[268] = "Azir";
-    this._champNameList[115] = "Ziggs";
-    this._champNameList[76] = "Nidalee";
-    this._champNameList[40] = "Janna";
-    this._champNameList[85] = "Kennen";
-    this._champNameList[61] = "Orianna";
-    this._champNameList[3] = "Galio";
-    this._champNameList[9] = "Fiddlesticks";
-    this._champNameList[45] = "Veigar";
-    this._champNameList[31] = "Cho'Gath";
-    this._champNameList[432] = "Bard";
-    this._champNameList[26] = "Zilean";
-    this._champNameList[150] = "Gnar";
-    this._champNameList[56] = "Nocturne";
-    this._champNameList[90] = "Malzahar";
-    this._champNameList[83] = "Yorick";
-    this._champNameList[104] = "Graves";
-    this._champNameList[203] = "Kindred";
-    this._champNameList[254] = "Vi";
-    this._champNameList[62] = "Wukong";
-    this._champNameList[10] = "Kayle";
-    this._champNameList[98] = "Shen";
-    this._champNameList[39] = "Irelia";
-    this._champNameList[5] = "Xin Zhao";
-    this._champNameList[64] = "Lee Sin";
-    this._champNameList[11] = "Master Yi";
-    this._champNameList[420] = "Illaoi";
-    this._champNameList[32] = "Amumu";
-    this._champNameList[60] = "Elise";
-    this._champNameList[48] = "Trundle";
-    this._champNameList[106] = "Volibear";
-    this._champNameList[161] = "Vel'Koz";
-    this._champNameList[20] = "Nunu";
-    this._champNameList[267] = "Nami";
-    this._champNameList[4] = "Twisted Fate";
-    this._champNameList[81] = "Ezreal";
-
-    return this._champNameList[id];
-
-};
+    try {
+        if (championLookup.hasOwnProperty(id)) {
+            return championLookup[id].name;
+        }
+        return ""
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
 
 function getKey(id) {
-
-    this._champNameList = [];
-    this._champNameList[240] = "Kled";
-    this._champNameList[143] = "Zyra";
-    this._champNameList[266] = "Aatrox";
-    this._champNameList[50] = "Swain";
-    this._champNameList[23] = "Tryndamere";
-    this._champNameList[18] = "Tristana";
-    this._champNameList[79] = "Gragas";
-    this._champNameList[6] = "Urgot";
-    this._champNameList[69] = "Cassiopeia";
-    this._champNameList[131] = "Diana";
-    this._champNameList[136] = "AurelionSol";
-    this._champNameList[54] = "Malphite";
-    this._champNameList[13] = "Ryze";
-    this._champNameList[33] = "Rammus";
-    this._champNameList[78] = "Poppy";
-    this._champNameList[29] = "Twitch";
-    this._champNameList[14] = "Sion";
-    this._champNameList[102] = "Shyvana";
-    this._champNameList[202] = "Jhin";
-    this._champNameList[154] = "Zac";
-    this._champNameList[1] = "Annie";
-    this._champNameList[236] = "Lucian";
-    this._champNameList[111] = "Nautilus";
-    this._champNameList[58] = "Renekton";
-    this._champNameList[43] = "Karma";
-    this._champNameList[245] = "Ekko";
-    this._champNameList[99] = "Lux";
-    this._champNameList[16] = "Soraka";
-    this._champNameList[103] = "Ahri";
-    this._champNameList[53] = "Blitzcrank";
-    this._champNameList[2] = "Olaf";
-    this._champNameList[41] = "Gangplank";
-    this._champNameList[112] = "Viktor";
-    this._champNameList[412] = "Thresh";
-    this._champNameList[27] = "Singed";
-    this._champNameList[36] = "DrMundo";
-    this._champNameList[86] = "Garen";
-    this._champNameList[113] = "Sejuani";
-    this._champNameList[34] = "Anivia";
-    this._champNameList[133] = "Quinn";
-    this._champNameList[57] = "Maokai";
-    this._champNameList[120] = "Hecarim";
-    this._champNameList[127] = "Lissandra";
-    this._champNameList[19] = "Warwick";
-    this._champNameList[25] = "Morgana";
-    this._champNameList[101] = "Xerath";
-    this._champNameList[105] = "Fizz";
-    this._champNameList[119] = "Draven";
-    this._champNameList[28] = "Evelynn";
-    this._champNameList[91] = "Talon";
-    this._champNameList[238] = "Zed";
-    this._champNameList[114] = "Fiora";
-    this._champNameList[74] = "Heimerdinger";
-    this._champNameList[7] = "Leblanc";
-    this._champNameList[68] = "Rumble";
-    this._champNameList[222] = "Jinx";
-    this._champNameList[37] = "Sona";
-    this._champNameList[21] = "MissFortune";
-    this._champNameList[82] = "Mordekaiser";
-    this._champNameList[201] = "Braum";
-    this._champNameList[96] = "KogMaw";
-    this._champNameList[44] = "Taric";
-    this._champNameList[55] = "Katarina";
-    this._champNameList[38] = "Kassadin";
-    this._champNameList[117] = "Lulu";
-    this._champNameList[59] = "JarvanIV";
-    this._champNameList[22] = "Ashe";
-    this._champNameList[24] = "Jax";
-    this._champNameList[30] = "Karthus";
-    this._champNameList[429] = "Kalista";
-    this._champNameList[12] = "Alistar";
-    this._champNameList[223] = "TahmKench";
-    this._champNameList[122] = "Darius";
-    this._champNameList[63] = "Brand";
-    this._champNameList[67] = "Vayne";
-    this._champNameList[8] = "Vladimir";
-    this._champNameList[110] = "Varus";
-    this._champNameList[421] = "RekSai";
-    this._champNameList[77] = "Udyr";
-    this._champNameList[84] = "Akali";
-    this._champNameList[89] = "Leona";
-    this._champNameList[163] = "Taliyah";
-    this._champNameList[126] = "Jayce";
-    this._champNameList[15] = "Sivir";
-    this._champNameList[134] = "Syndra";
-    this._champNameList[107] = "Rengar";
-    this._champNameList[80] = "Pantheon";
-    this._champNameList[72] = "Skarner";
-    this._champNameList[92] = "Riven";
-    this._champNameList[157] = "Yasuo";
-    this._champNameList[121] = "Khazix";
-    this._champNameList[17] = "Teemo";
-    this._champNameList[42] = "Corki";
-    this._champNameList[75] = "Nasus";
-    this._champNameList[51] = "Caitlyn";
-    this._champNameList[35] = "Shaco";
-    this._champNameList[268] = "Azir";
-    this._champNameList[115] = "Ziggs";
-    this._champNameList[76] = "Nidalee";
-    this._champNameList[40] = "Janna";
-    this._champNameList[85] = "Kennen";
-    this._champNameList[61] = "Orianna";
-    this._champNameList[3] = "Galio";
-    this._champNameList[9] = "Fiddlesticks";
-    this._champNameList[45] = "Veigar";
-    this._champNameList[31] = "Chogath";
-    this._champNameList[432] = "Bard";
-    this._champNameList[26] = "Zilean";
-    this._champNameList[150] = "Gnar";
-    this._champNameList[56] = "Nocturne";
-    this._champNameList[90] = "Malzahar";
-    this._champNameList[83] = "Yorick";
-    this._champNameList[104] = "Graves";
-    this._champNameList[203] = "Kindred";
-    this._champNameList[254] = "Vi";
-    this._champNameList[62] = "MonkeyKing";
-    this._champNameList[10] = "Kayle";
-    this._champNameList[98] = "Shen";
-    this._champNameList[39] = "Irelia";
-    this._champNameList[5] = "XinZhao";
-    this._champNameList[64] = "LeeSin";
-    this._champNameList[11] = "MasterYi";
-    this._champNameList[420] = "Illaoi";
-    this._champNameList[32] = "Amumu";
-    this._champNameList[60] = "Elise";
-    this._champNameList[48] = "Trundle";
-    this._champNameList[106] = "Volibear";
-    this._champNameList[161] = "Velkoz";
-    this._champNameList[20] = "Nunu";
-    this._champNameList[267] = "Nami";
-    this._champNameList[4] = "TwistedFate";
-    this._champNameList[81] = "Ezreal";
-
-    return this._champNameList[id];
+    try {
+        if (championLookup.hasOwnProperty(id)) {
+            return championLookup[id].id;
+        }
+        return ""
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 module.exports = Player;
