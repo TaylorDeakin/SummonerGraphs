@@ -274,7 +274,6 @@ method.calcAllTheThings = function () {
     this._damageDealtData = damageDealtData.slice(0, -1);
     this._goldData = goldData.slice(0, -1);
     this._minionData = minionData.slice(0, -1);
-
     this._rankedMasteryList = rankedMastery;
 
 };
