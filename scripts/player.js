@@ -142,7 +142,9 @@ function Player(name, nameLower, region, season) {
         "429": {"id": "Kalista", "name": "Kalista"},
         "432": {"id": "Bard", "name": "Bard"},
         "164": {"id": "Camille", "name": "Camille"},
-        "427": {"id": "Ivern", "name": "Ivern"}
+        "427": {"id": "Ivern", "name": "Ivern"},
+        "487": {"id": "Rakan", "name": "Rakan"},
+        "489": {"id": "Xayah", "name": "Xayah"}
     };
 }
 
